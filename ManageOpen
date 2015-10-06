@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# This script can only connect to WPA networks with a key. 
+# Use ManageOpen for networks without a key.
+# In general, for known networks, just do "Manage <SSID> <Key>"
+
+PerformConnect() {
+    echo "Bringing interface up, scanning..."
+    sudo ifconfig wlan0 down
+    sudo ifconfig wlan0 up
+
+    echo "Starting WPA_Supplicant."
+        sudo wpa_supplicant -iwlan0 -c "$1" &
+        echo "Sleeping for 3 seconds."
+        sleep 3
+        echo "Starting dhclient."
+        sudo dhclient wlan0
+}
+
+CONDIR=$HOME/.connections
+mkdir -p $CONDIR
+
+if [[ "$#" = 1 ]]; then
+if [[ ! -e $CONDIR/${1}.conf ]]; then
+echo "Generating a new configuration for the open network."
+sed "s/NETWORK_SSID/$1/" `dirname $0`/Template.conf > "$CONDIR/${1}.conf"
+fi
+# Here we assume we did not exit, so there exists a WPA network we are managing.
+# Note that this script would have run with SetUID 1.
+PerformConnect "$CONDIR/${1}.conf"
+fi

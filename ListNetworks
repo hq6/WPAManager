@@ -1,0 +1,4 @@
+# List Wifi connections by SSID
+sudo ifconfig wlan0 up
+sleep 2
+sudo iwlist wlan0 scan  | grep -B1 ESSID | $(dirname $0)/FormatList.py | column -s '	' -t
