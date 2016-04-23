@@ -4,13 +4,14 @@
 # Use ManageOpen for networks without a key.
 # In general, for known networks, just do "Manage <SSID> <Key>"
 
+INTERFACE=$(iw dev | awk '/Interface/ {print $2}')
 PerformConnect() {
     echo "Starting WPA_Supplicant."
-        sudo wpa_supplicant -iwlan0 -c $1 &
+        sudo wpa_supplicant -i$INTERFACE -c $1 &
         echo "Sleeping for 3 seconds."
         sleep 3
         echo "Starting dhclient."
-        sudo dhclient wlan0
+        sudo dhclient $INTERFACE
 }
 
 CONDIR=$HOME/.connections

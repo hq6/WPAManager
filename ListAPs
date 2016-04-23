@@ -1,3 +1,4 @@
 # List WiFi connections by ssid and AP
-sudo ifconfig wlan0 up
-sudo iwlist wlan0 scan  | $(dirname $0)/ListAPs.py  $1 | column -s '	' -t
+INTERFACE=$(iw dev | awk '/Interface/ {print $2}')
+sudo ifconfig $INTERFACE up
+sudo iwlist $INTERFACE scan  | $(dirname $0)/ListAPs.py  $1 | column -s '	' -t
